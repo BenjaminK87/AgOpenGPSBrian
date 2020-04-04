@@ -16,6 +16,8 @@ namespace AgOpenGPS
 
         private double easting, northing, latK, lonK;
 
+        private string feldname;
+
 
         public FormBoundary(Form callingForm)
         {
@@ -404,6 +406,163 @@ namespace AgOpenGPS
         {
             mf.bnd.createBndOffset = (double)nudBndOffset.Value;
             mf.bnd.isBndBeingMade = true;
+        }
+
+        private void btnMultiImport_Click(object sender, EventArgs e)
+        {
+            if (sender is Button button)
+            {
+                Selectedreset = true;
+                btnLoadBoundaryFromGE.Enabled = false;
+                btnDelete.Enabled = false;
+
+                string fileAndDirectory;
+                {
+                    //create the dialog instance
+                    OpenFileDialog ofd = new OpenFileDialog
+                    {
+                        //set the filter to text KML only
+                        Filter = "KML files (*.KML)|*.KML",
+
+                        //the initial directory, fields, for the open dialog
+                        InitialDirectory = mf.fieldsDirectory + mf.currentFieldDirectory
+                    };
+
+                    //was a file selected
+                    if (ofd.ShowDialog() == DialogResult.Cancel) return;
+                    else fileAndDirectory = ofd.FileName;
+                }
+
+                //start to read the file
+                string line = null;
+                string coordinates = null;
+                int startIndex;
+                int i = 0;
+
+                using (System.IO.StreamReader reader = new System.IO.StreamReader(fileAndDirectory))
+                {
+
+                    if (button.Name == "btnLoadMultiBoundaryFromGE") ResetAllBoundary();
+                    else i = mf.bnd.boundarySelected;
+
+                    try
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            line = reader.ReadLine();
+
+                            startIndex = line.IndexOf("Feldname\">");
+                            if (startIndex != -1)
+                            {
+                                startIndex += 10;
+                                int endIndex = line.IndexOf("</SimpleData>");
+                                if (endIndex > startIndex)
+                                {
+                                    feldname = line.Substring(startIndex, endIndex - startIndex);
+                                    //mf.bnd.bndArr[i].bndLine.Clear();
+                                    i = 0;
+                                    mf.bnd.bndArr.Clear();
+                                    mf.turn.turnArr.Clear();
+                                    mf.gf.geoFenceArr.Clear();
+                                    if(mf.bnd.bndArr.Count > 0) mf.bnd.bndArr[i].bndLine.Clear();
+                                }
+                            }
+
+                            startIndex = line.IndexOf("<coordinates>");
+
+                            if (startIndex != -1)
+                            {
+                                while (true)
+                                {
+                                    int endIndex = line.IndexOf("</coordinates>");
+
+                                    if (endIndex == -1)
+                                    {
+                                        //just add the line
+                                        if (startIndex == -1) coordinates += line.Substring(0);
+                                        else coordinates += line.Substring(startIndex + 13);
+                                    }
+                                    else
+                                    {
+                                        if (startIndex == -1) coordinates += line.Substring(0, endIndex);
+                                        else coordinates += line.Substring(startIndex + 13, endIndex - (startIndex + 13));
+                                        break;
+                                    }
+                                    line = reader.ReadLine();
+                                    line = line.Trim();
+                                    startIndex = -1;
+                                }
+
+                                line = coordinates;
+                                char[] delimiterChars = { ' ', '\t', '\r', '\n' };
+                                string[] numberSets = line.Split(delimiterChars);
+
+                                //at least 3 points
+                                if (numberSets.Length > 2)
+                                {
+                                    mf.bnd.bndArr.Add(new CBoundaryLines());
+                                    mf.turn.turnArr.Add(new CTurnLines());
+                                    mf.gf.geoFenceArr.Add(new CGeoFenceLines());
+
+                                    foreach (var item in numberSets)
+                                    {
+                                        string[] fix = item.Split(',');
+                                        double.TryParse(fix[0], NumberStyles.Float, CultureInfo.InvariantCulture, out lonK);
+                                        double.TryParse(fix[1], NumberStyles.Float, CultureInfo.InvariantCulture, out latK);
+                                        double[] xy = mf.pn.DecDeg2UTM(latK, lonK);
+
+                                        //match new fix to current position
+                                        easting = xy[0] - mf.pn.utmEast;
+                                        northing = xy[1] - mf.pn.utmNorth;
+
+                                        double east = easting;
+                                        double nort = northing;
+
+                                        //fix the azimuth error
+                                        easting = (Math.Cos(-mf.pn.convergenceAngle) * east) - (Math.Sin(-mf.pn.convergenceAngle) * nort);
+                                        northing = (Math.Sin(-mf.pn.convergenceAngle) * east) + (Math.Cos(-mf.pn.convergenceAngle) * nort);
+
+                                        //add the point to boundary
+                                        vec3 bndPt = new vec3(easting, northing, 0);
+                                        mf.bnd.bndArr[i].bndLine.Add(bndPt);
+                                    }
+
+                                    //fix the points if there are gaps bigger then
+                                    mf.bnd.bndArr[i].CalculateBoundaryHeadings();
+                                    mf.bnd.bndArr[i].PreCalcBoundaryLines();
+                                    mf.bnd.bndArr[i].FixBoundaryLine(i, mf.tool.toolWidth);
+
+                                    //boundary area, pre calcs etc
+                                    mf.bnd.bndArr[i].CalculateBoundaryArea();
+                                    mf.bnd.bndArr[i].PreCalcBoundaryLines();
+                                    mf.bnd.bndArr[i].isSet = true;
+                                    //if (i == 0) mf.bnd.bndArr[i].isOwnField = true;
+                                    //else mf.bnd.bndArr[i].isOwnField = false;
+                                    coordinates = "";
+                                    i++;
+                                }
+                                else
+                                {
+                                    mf.TimedMessageBox(2000, gStr.gsErrorreadingKML, gStr.gsChooseBuildDifferentone);
+                                }
+                                if (button.Name == "btnLoadBoundaryFromGE")
+                                {
+                                    break;
+                                }
+                                mf.currentFieldDirectory = feldname;
+                                mf.FileSaveBoundary();
+                                mf.fd.UpdateFieldBoundaryGUIAreas();
+                                UpdateChart();
+                            }
+                            
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
         private void btnDeleteAll_Click(object sender, EventArgs e)

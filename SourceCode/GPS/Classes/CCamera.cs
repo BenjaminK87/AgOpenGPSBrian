@@ -18,7 +18,7 @@ namespace AgOpenGPS
 
         public double gridZoom;
 
-        public double zoomValue = 15;
+        public double zoomValue = 6;
         public double previousZoom = 25;
 
         public bool camFollowing;

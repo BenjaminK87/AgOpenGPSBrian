@@ -642,6 +642,8 @@ namespace AgOpenGPS
             isJRK = Properties.Settings.Default.setAS_isJRK;
 
             isRTK = Properties.Settings.Default.setGPS_isRTK;
+
+            toolStripSnapDistance.Text = Properties.Settings.Default.setAS_snapDistance.ToString();
         }
 
         //form is closing so tidy up and save settings
@@ -1108,6 +1110,29 @@ namespace AgOpenGPS
             isMapping = !isMapping;
             if (isMapping) btnTestIsMapping.Text = "Mapping";
             else btnTestIsMapping.Text = "No Map";
+        }
+
+        private void snapDistance1cm_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.setAS_snapDistance = (int)1;
+            toolStripSnapDistance.Text = "1";
+        }
+
+        private void snapDistance10cm_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.setAS_snapDistance = (int)10;
+            toolStripSnapDistance.Text = "10";
+        }
+
+        private void snapDistance25cm_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.setAS_snapDistance = (int)25;
+            toolStripSnapDistance.Text = "25";
+        }
+
+        private void toolStripSnapDistance_ButtonClick(object sender, EventArgs e)
+        {
+            toolStripSnapDistance.ShowDropDown();
         }
 
         public void GetHeadland()

@@ -308,6 +308,25 @@ namespace AgOpenGPS
                 vehicleToolStripBtn.Visible = true;
                 AutoSteerToolBtn.Visible = true;
 
+                btnContour.Visible = true;
+                btnCurve.Visible = true;
+                btnSectionOffAutoOn.Visible = true;
+                toolStripBtnDrag.Visible = true;
+                cameraDropDown.Visible = true;
+                stripSectionColor.Visible = true;
+                toolStripMenuRecPath.Visible = true;
+                toolStripDropDownButton4.Visible = true;
+                toolStripDropDownButton2.Visible = true;
+                toolStripBtnDropDownBoundaryTools.Visible = true;
+                toolStripStatusLabel1.Visible = true;
+                pbarAutoSteerComm.Visible = true;
+                toolStripStatusLabel2.Visible = true;
+                pbarUDPComm.Visible = true;
+                toolStripStatusLabel3.Visible = true;
+                pbarMachineComm.Visible = true;
+                distanceToolBtn.Visible = true;
+                batmanToolStripBtn.Visible = true;
+
                 lblDateTime.Visible = false;
                 snapLeftBigStrip.Visible = false;
                 snapRightBigStrip.Visible = false;
@@ -346,6 +365,25 @@ namespace AgOpenGPS
                 toolToolbottomStripBtn.Visible = false;
                 vehicleToolStripBtn.Visible = false;
                 AutoSteerToolBtn.Visible = false;
+
+                btnContour.Visible = false;
+                btnCurve.Visible = false;
+                btnSectionOffAutoOn.Visible = false;
+                toolStripBtnDrag.Visible = false;
+                cameraDropDown.Visible = false;
+                stripSectionColor.Visible = false;
+                toolStripMenuRecPath.Visible = false;
+                toolStripDropDownButton4.Visible = false;
+                toolStripDropDownButton2.Visible = false;
+                toolStripBtnDropDownBoundaryTools.Visible = false;
+                toolStripStatusLabel1.Visible = false;
+                pbarAutoSteerComm.Visible = false;
+                toolStripStatusLabel2.Visible = false;
+                pbarUDPComm.Visible = false;
+                toolStripStatusLabel3.Visible = false;
+                pbarMachineComm.Visible = false;
+                distanceToolBtn.Visible = false;
+                batmanToolStripBtn.Visible = false;
 
                 lblDateTime.Visible = true;
                 snapLeftBigStrip.Visible = true;

@@ -48,6 +48,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lblOffset = new System.Windows.Forms.Label();
+            this.btnMultiImport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudBndOffset)).BeginInit();
             this.SuspendLayout();
             // 
@@ -343,6 +344,21 @@
             this.lblOffset.Text = "gsOffset";
             this.lblOffset.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btnMultiImport
+            // 
+            this.btnMultiImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMultiImport.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMultiImport.Image = global::AgOpenGPS.Properties.Resources.BoundaryLoadFromGE;
+            this.btnMultiImport.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnMultiImport.Location = new System.Drawing.Point(558, 11);
+            this.btnMultiImport.Name = "btnMultiImport";
+            this.btnMultiImport.Size = new System.Drawing.Size(91, 84);
+            this.btnMultiImport.TabIndex = 417;
+            this.btnMultiImport.Text = "Multi\r\nImport";
+            this.btnMultiImport.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnMultiImport.UseVisualStyleBackColor = true;
+            this.btnMultiImport.Click += new System.EventHandler(this.btnMultiImport_Click);
+            // 
             // FormBoundary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
@@ -350,6 +366,7 @@
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(756, 568);
             this.ControlBox = false;
+            this.Controls.Add(this.btnMultiImport);
             this.Controls.Add(this.lblOffset);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -407,5 +424,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblOffset;
+        private System.Windows.Forms.Button btnMultiImport;
     }
 }
