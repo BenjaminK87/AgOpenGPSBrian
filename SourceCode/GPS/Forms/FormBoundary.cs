@@ -465,6 +465,69 @@ namespace AgOpenGPS
                                     mf.turn.turnArr.Clear();
                                     mf.gf.geoFenceArr.Clear();
                                     if(mf.bnd.bndArr.Count > 0) mf.bnd.bndArr[i].bndLine.Clear();
+
+                                    string fileAndDirectory1 = mf.fieldsDirectory + feldname + "\\Field.txt";
+                                    string line1;
+                                    using (StreamReader reader1 = new StreamReader(fileAndDirectory1))
+                                    {
+                                        try
+                                        {
+                                            //Date time line
+                                            line1 = reader1.ReadLine();
+
+                                            //dir header $FieldDir
+                                            line1 = reader1.ReadLine();
+
+                                            //read field directory
+                                            line1 = reader1.ReadLine();
+
+                                            string currentFieldDirectory = line1.Trim();
+
+                                            //Offset header
+                                            line1 = reader1.ReadLine();
+
+                                            //read the Offsets 
+                                            line1 = reader1.ReadLine();
+                                            string[] offs = line1.Split(',');
+                                            
+                                            mf.pn.utmEast = int.Parse(offs[0]);
+                                            mf.pn.utmNorth = int.Parse(offs[1]);
+                                            mf.pn.zone = int.Parse(offs[2]);
+
+                                            //create a new grid
+                                            mf.worldGrid.CreateWorldGrid(mf.pn.actualNorthing - mf.pn.utmNorth, mf.pn.actualEasting - mf.pn.utmEast);
+
+                                            //convergence angle update
+                                            if (!reader1.EndOfStream)
+                                            {
+                                                line1 = reader1.ReadLine();
+                                                line1 = reader1.ReadLine();
+                                                mf.pn.convergenceAngle = double.Parse(line1, CultureInfo.InvariantCulture);
+                                                mf.lblConvergenceAngle.Text = Math.Round(glm.toDegrees(mf.pn.convergenceAngle), 3).ToString();
+                                            }
+
+                                            //start positions
+                                            if (!reader1.EndOfStream)
+                                            {
+                                                line1 = reader1.ReadLine();
+                                                line1 = reader1.ReadLine();
+                                                offs = line1.Split(',');
+
+                                                mf.pn.latStart = double.Parse(offs[0], CultureInfo.InvariantCulture);
+                                                mf.pn.lonStart = double.Parse(offs[1], CultureInfo.InvariantCulture);
+                                            }
+                                        }
+
+                                        catch (Exception e1)
+                                        {
+                                            MessageBox.Show("While Opening Field" + e1.ToString());
+                                        }
+                                    }
+
+
+
+
+                                    //mf.FileOpenField(mf.fieldsDirectory +feldname + "\\");
                                 }
                             }
 
